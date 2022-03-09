@@ -17,6 +17,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     python3-distutils python3-dev \
     openjdk-8-jdk \
     eatmydata && \
+    bzip2 && \
     apt-get autoclean
 
 RUN locale-gen en_US.UTF-8
@@ -32,14 +33,16 @@ RUN git config --global user.email "you@rock64" && \
 
 RUN gem install fpm
 
-RUN curl -L https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 | tar -C /tmp -jx && \
-    mv /tmp/bin/linux/amd64/github-release /usr/local/bin/
+RUN curl -o /tmp/linux-amd64-github-release.bz2 -OL https://github.com/aktau/github-release/releases/download/v0.10.0/linux-amd64-github-release.bz2 && \    
+    bzip2 -dc /tmp/linux-amd64-github-release.bz2 > /tmp/github-release && \
+    mv /tmp/github-release /usr/local/bin/ && \
+    chmod +x /usr/local/bin/github-release
 
 RUN which github-release
 RUN curl https://storage.googleapis.com/git-repo-downloads/repo > /usr/local/bin/repo && \
     chmod +x /usr/local/bin/repo
 
-RUN git clone https://github.com/rockchip-linux/rkflashtool && \
+RUN git clone https://github.com/linux-rockchip/rkflashtool && \
     make -C rkflashtool install && \
     rm -rf rkflashtool
 
